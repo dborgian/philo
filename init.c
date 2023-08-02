@@ -6,7 +6,7 @@
 /*   By: dborgian <dborgian@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 16:44:33 by dborgian          #+#    #+#             */
-/*   Updated: 2023/07/26 16:45:54 by dborgian         ###   ########.fr       */
+/*   Updated: 2023/08/02 14:49:37 by dborgian         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ int	init_data(t_data *data, char **argv, int argc)
 		data->meals_nb = ft_atoi(argv[5]);
 	else
 		data->meals_nb = -1;
-	if (data->philo_num < 0 || data->philo_num > 200 || data->death_time < 0 || data->eat_time < 0
-		|| data->sleep_time < 0 || data->meals_nb < 0)
+	if (data->philo_num <= 0 || data->philo_num > 200 || data->death_time <= 0
+		|| data->eat_time <= 0 || data->sleep_time <= 0)
 		return (printf("Error: wrong input\n"));
-	data->dead = 0;
+	data->stop_eating = 0;
 	data->finished = 0;
-	phtread_mutex_init(&data->write, NULL);
-	phtread_mutex_init(&data->lock, NULL);
+	pthread_mutex_init(&data->write, NULL);
+	pthread_mutex_init(&data->lock, NULL);
 	return (0);
 }
 
@@ -60,10 +60,10 @@ int	alloc_data(t_data *data)
 
 int	init_forks(t_data *data)
 {
-	int i;
-	
+	int	i;
+
 	i = -1;
-	while(++i < data->philo_num)
+	while (++i < data->philo_num)
 		pthread_mutex_init(&data->forks[i], NULL);
 	i = 0;
 	data->philos[i].l_fork = &data->forks[0];
@@ -80,7 +80,7 @@ int	init_forks(t_data *data)
 
 int	init_philos(t_data *data)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < data->philo_num)
